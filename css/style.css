@@ -55,10 +55,12 @@ button {
 
 /* Logo */
 
-.logo {
-  font-size: 2rem;
-  font-weight: 700;
-  letter-spacing: 0.02em;
+/* Proper Logo Image Control */
+.site-logo {
+  height: 60px;       /* Adjust size */
+  width: auto;        /* Keeps proportions */
+  display: block;
+  object-fit: contain;
 }
 
 .logo__h {
