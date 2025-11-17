@@ -143,13 +143,42 @@ button {
   overflow: hidden;
 }
 
-/* full circle container that rotates */
-.hero-photos {
+/* SHELL: moves as a group (top → center → down) */
+.hero-photos-shell {
   position: absolute;
   left: 50%;
   bottom: 0;
   width: 0;
   height: calc(var(--hero-radius) * 2);
+  transform-origin: 50% 100%;
+
+  /* start ABOVE the section */
+  opacity: 0;
+  transform: translateX(-50%) translateY(-130%) scale(0.7);
+  transition:
+    transform 0.9s cubic-bezier(0.22, 0.61, 0.36, 1),
+    opacity 0.9s ease;
+}
+
+/* when hero is IN VIEW: slide into place */
+.hero-photos-shell.in-view {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0) scale(1);
+}
+
+/* when we scroll PAST the hero: group + slide down */
+.hero-photos-shell.exit-down {
+  opacity: 0;
+  transform: translateX(-50%) translateY(130%) scale(0.7);
+}
+
+/* INNER ROTATOR – always rotating */
+.hero-photos {
+  position: absolute;
+  left: 50%;
+  bottom: 0;
+  width: 0;
+  height: 100%;
   transform-origin: 50% 100%;
   animation: orbitSpin 28s linear infinite;
 }
@@ -165,14 +194,17 @@ button {
   background: #f5f5f5;
   box-shadow: 0 16px 40px rgba(0, 0, 0, 0.25);
   transform-origin: 50% 100%;
-  opacity: 0;
 
   /* circle math */
   --step: calc(360deg / var(--orbit-slots));
   --angle: calc(var(--i) * var(--step));
 
-  animation: stackToOrbit 1.4s ease-out forwards;
-  animation-delay: calc(0.1s * var(--i));
+  /* fixed arc position */
+  transform: translateX(-50%)
+             rotate(var(--angle))
+             translateY(calc(-1 * var(--hero-radius)));
+
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
 }
 
 /* each image fully fills the frame */
@@ -183,13 +215,12 @@ button {
   filter: grayscale(100%);
 }
 
-/* hover lift */
+/* hover lift – applied on top of the arc transform */
 .photo:hover {
   transform: translateX(-50%)
              rotate(var(--angle))
              translateY(calc(-1 * var(--hero-radius) - 25px));
   box-shadow: 0 22px 50px rgba(0, 0, 0, 0.32);
-  transition: transform 0.25s ease, box-shadow 0.25s ease;
   z-index: 3;
 }
 
@@ -204,25 +235,7 @@ button {
 .photo--8 { --i: 7; }
 .photo--9 { --i: 8; }
 
-/* entrance: stack ➜ orbit */
-@keyframes stackToOrbit {
-  0% {
-    opacity: 0;
-    transform: translateX(-50%) translateY(40px) scale(0.7);
-  }
-  40% {
-    opacity: 1;
-    transform: translateX(-50%) translateY(0) scale(1);
-  }
-  100% {
-    opacity: 1;
-    transform: translateX(-50%)
-               rotate(var(--angle))
-               translateY(calc(-1 * var(--hero-radius)));
-  }
-}
-
-/* continuous rotation of the full circle */
+/* continuous rotation of the inner circle */
 @keyframes orbitSpin {
   0% {
     transform: translateX(-50%) rotate(0deg);
@@ -231,6 +244,7 @@ button {
     transform: translateX(-50%) rotate(360deg);
   }
 }
+ 
 
 /* red underline */
 .hero-arc__line {

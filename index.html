@@ -47,54 +47,59 @@
 
   <!-- HERO -->
   <main>
-    <section class="hero">
-      <div class="container hero__inner">
+   <section class="hero">
+  <div class="container hero__inner">
 
-        <!-- Big text -->
-       <h1 class="hero-title">
-        Get <span> Set </span> Elevate
-      </h1>
+    <!-- Big text -->
+    <h1 class="hero-title">
+      Get <span> Set </span> Elevate
+    </h1>
 
+    <!-- image arc -->
+    <div class="hero-arc">
 
-        <!-- image arc -->
-        <div class="hero-arc">
-          <div class="hero-photos">
-            <!-- replace src paths with your own images in /img if you want -->
-            <div class="photo photo--1">
-              <img src="img/hero (1).avif" alt="Person 1">
-            </div>
-            <div class="photo photo--2">
-              <img src="img/hero (2).avif" alt="Person 2">
-            </div>
-            <div class="photo photo--3">
-              <img src="img/hero (3).avif" alt="Person 3">
-            </div>
-            <div class="photo photo--4">
-              <img src="img/hero (4).avif" alt="Person 4">
-            </div>
-            <div class="photo photo--5">
-              <img src="img/hero (5).avif" alt="Person 5">
-            </div>
-             <div class="photo photo--6">
-              <img src="img/hero (6).avif" alt="Person 6">
-            </div>
-             <div class="photo photo--7">
-              <img src="img/hero (2).avif" alt="Person 7">
-            </div>
-             <div class="photo photo--8">
-              <img src="img/hero (8).avif" alt="Person 8">
-            </div>
-             <div class="photo photo--9">
-              <img src="img/hero (9).avif" alt="Person 9">
-            </div>
+      <!-- NEW SHELL that will move as a group -->
+      <div class="hero-photos-shell">
+        <!-- Inner element that rotates -->
+        <div class="hero-photos">
+          <!-- replace src paths with your own images in /img if you want -->
+          <div class="photo photo--1">
+            <img src="img/hero (1).avif" alt="Person 1">
           </div>
-
-          <!-- red underline -->
-          <div class="hero-arc__line"></div>
+          <div class="photo photo--2">
+            <img src="img/hero (2).avif" alt="Person 2">
+          </div>
+          <div class="photo photo--3">
+            <img src="img/hero (3).avif" alt="Person 3">
+          </div>
+          <div class="photo photo--4">
+            <img src="img/hero (4).avif" alt="Person 4">
+          </div>
+          <div class="photo photo--5">
+            <img src="img/hero (5).avif" alt="Person 5">
+          </div>
+          <div class="photo photo--6">
+            <img src="img/hero (6).avif" alt="Person 6">
+          </div>
+          <div class="photo photo--7">
+            <img src="img/hero (2).avif" alt="Person 7">
+          </div>
+          <div class="photo photo--8">
+            <img src="img/hero (8).avif" alt="Person 8">
+          </div>
+          <div class="photo photo--9">
+            <img src="img/hero (9).avif" alt="Person 9">
+          </div>
         </div>
-
       </div>
-    </section>
+
+      <!-- red underline -->
+      <div class="hero-arc__line"></div>
+    </div>
+
+  </div>
+</section>
+
 
 
     <section class="how-works">
@@ -743,6 +748,9 @@
 
   <script>
   document.addEventListener("DOMContentLoaded", () => {
+    /* ================================
+       1) ABOUT + REVIEWS (existing)
+       ================================ */
     // add the animation class to all review cards + photos
     document
       .querySelectorAll(".review-card, .review-photo")
@@ -771,8 +779,43 @@
     document
       .querySelectorAll(".about-animate, .reviews-animate")
       .forEach((el) => observer.observe(el));
+
+    /* ================================
+       2) HERO IMAGES ORBIT (new)
+       ================================ */
+    const heroArc = document.querySelector(".hero-arc");
+    const heroShell = document.querySelector(".hero-photos-shell");
+
+    if (heroArc && heroShell) {
+      const heroObserver = new IntersectionObserver(
+        (entries) => {
+          entries.forEach((entry) => {
+            if (entry.isIntersecting) {
+              // coming into view: restart from top → slide into center
+              heroShell.classList.remove("exit-down");
+              heroShell.classList.remove("in-view");
+
+              // force reflow so transition restarts cleanly
+              void heroShell.offsetWidth;
+
+              heroShell.classList.add("in-view");
+            } else {
+              // leaving viewport: group & slide downward
+              heroShell.classList.remove("in-view");
+              heroShell.classList.add("exit-down");
+            }
+          });
+        },
+        {
+          threshold: 0.35, // play when ~35% of hero is visible
+        }
+      );
+
+      heroObserver.observe(heroArc);
+    }
   });
 </script>
+
 
 
 
